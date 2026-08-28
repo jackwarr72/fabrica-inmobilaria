@@ -1,0 +1,282 @@
+// Centinela — dominio de captación inmobiliaria (Task 002)
+// Referencia: .tasks/CONTEXT.md secciones 3, 4 y 6.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  ANALYST
+  ADVISOR
+}
+
+enum PropertyType {
+  HOUSE
+  APARTMENT
+  LAND
+  COMMERCIAL
+  WAREHOUSE
+  DEVELOPMENT
+  INVESTMENT
+  OTHER
+}
+
+enum OperationType {
+  SALE
+  RENT
+}
+
+enum OpportunityStatus {
+  DETECTED
+  REGISTERED
+  VALIDATING
+  QUALIFIED
+  CONTACTED
+  APPOINTMENT
+  DOCUMENTATION
+  INVENTORY
+  FOLLOW_UP
+  DISCARDED
+}
+
+enum Qualification {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ContactKind {
+  OWNER
+  BROKER
+  ALLIANCE
+  OTHER
+}
+
+enum SourceKind {
+  SOCIAL_MEDIA
+  PORTAL
+  FORUM
+  GOOGLE_ALERT
+  ALLIANCE
+  REFERRAL
+  MANUAL
+  OTHER
+}
+
+enum AllianceType {
+  BROKER
+  DEVELOPER
+  NOTARY
+  ARCHITECT
+  LAWYER
+  APPRAISER
+  OTHER
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// ─── Usuarios ─────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  role         Role     @default(ANALYST)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  registeredOps        Opportunity[]         @relation("RegisteredBy")
+  assignedOps          Opportunity[]         @relation("AssignedOps")
+  assignedContacts     Contact[]
+  appointments         Appointment[]
+  stageHistory         StageHistory[]
+  allianceInteractions AllianceInteraction[]
+  dailyReports         DailyReport[]
+}
+
+// ─── Captación ────────────────────────────────────────────
+
+model Source {
+  id       String     @id @default(cuid())
+  name     String     @unique
+  kind     SourceKind
+  url      String?
+  notes    String?
+  isActive Boolean    @default(true)
+  createdAt DateTime   @default(now())
+
+  opportunities Opportunity[]
+}
+
+model Opportunity {
+  id                 String            @id @default(cuid())
+  title              String
+  description        String?
+  propertyType       PropertyType
+  operation          OperationType
+  price              Decimal?          @db.Decimal(14, 2)
+  currency           String            @default("MXN")
+  zone               String?
+  address            String?
+  sourceUrl          String?
+  sourceNotes        String?
+  status             OpportunityStatus @default(DETECTED)
+  qualification      Qualification?
+  qualificationNotes String?
+  firstContactAt     DateTime?
+  sourceId           String?
+  contactId          String?
+  registeredById     String?
+  assignedToId       String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  source       Source?        @relation(fields: [sourceId], references: [id])
+  contact      Contact?       @relation(fields: [contactId], references: [id])
+  registeredBy User?          @relation("RegisteredBy", fields: [registeredById], references: [id])
+  assignedTo   User?          @relation("AssignedOps", fields: [assignedToId], references: [id])
+  stageHistory StageHistory[]
+  priceEvents  PriceEvent[]
+  appointments Appointment[]
+
+  @@index([status, createdAt])
+  @@index([sourceId])
+  @@index([contactId])
+  @@index([assignedToId])
+}
+
+model StageHistory {
+  id            String             @id @default(cuid())
+  opportunityId String
+  fromStatus    OpportunityStatus?
+  toStatus      OpportunityStatus
+  note          String?
+  userId        String?
+  createdAt     DateTime           @default(now())
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  user        User?       @relation(fields: [userId], references: [id])
+
+  @@index([opportunityId, createdAt])
+}
+
+model PriceEvent {
+  id            String   @id @default(cuid())
+  opportunityId String
+  oldPrice      Decimal? @db.Decimal(14, 2)
+  newPrice      Decimal  @db.Decimal(14, 2)
+  note          String?
+  detectedAt    DateTime @default(now())
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([opportunityId, detectedAt])
+}
+
+// ─── Contactos y citas ────────────────────────────────────
+
+model Contact {
+  id            String      @id @default(cuid())
+  name          String
+  kind          ContactKind @default(OWNER)
+  phone         String?
+  phone2        String?
+  email         String?
+  socialHandle  String?
+  zone          String?
+  notes         String?
+  lastContactAt DateTime?
+  assignedToId  String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  assignedTo    User?         @relation(fields: [assignedToId], references: [id])
+  opportunities Opportunity[]
+  appointments  Appointment[]
+
+  @@index([createdAt])
+  @@index([assignedToId])
+}
+
+model Appointment {
+  id            String            @id @default(cuid())
+  opportunityId String?
+  contactId     String?
+  userId        String?
+  scheduledAt   DateTime
+  locationOrUrl String?
+  status        AppointmentStatus @default(SCHEDULED)
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id])
+  contact     Contact?     @relation(fields: [contactId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+
+  @@index([scheduledAt])
+  @@index([userId])
+}
+
+// ─── Alianzas estratégicas ────────────────────────────────
+
+model Alliance {
+  id        String       @id @default(cuid())
+  name      String
+  type      AllianceType
+  company   String?
+  phone     String?
+  email     String?
+  zone      String?
+  notes     String?
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  interactions AllianceInteraction[]
+}
+
+model AllianceInteraction {
+  id         String   @id @default(cuid())
+  allianceId String
+  userId     String?
+  date       DateTime @default(now())
+  channel    String?
+  notes      String?
+
+  alliance Alliance @relation(fields: [allianceId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id])
+
+  @@index([allianceId, date])
+}
+
+// ─── Entregables diarios ──────────────────────────────────
+
+model DailyReport {
+  id                    String   @id @default(cuid())
+  date                  DateTime @unique @db.Date
+  propertiesDetected    Int      @default(0)
+  newContacts           Int      @default(0)
+  priceChanges          Int      @default(0)
+  appointmentsScheduled Int      @default(0)
+  inventoryUpdated      Boolean  @default(false)
+  notes                 String?
+  createdById           String?
+  createdAt             DateTime @default(now())
+
+  createdBy User? @relation(fields: [createdById], references: [id])
+}

@@ -1,0 +1,182 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  ANALISTA
+  ASESOR
+}
+
+enum OperationType {
+  VENTA
+  RENTA
+  TRASPASO
+}
+
+enum PropertyType {
+  CASA
+  DEPARTAMENTO
+  TERRENO
+  LOCAL
+  BODEGA
+  DESARROLLO
+}
+
+enum Stage {
+  BUSCAR
+  REGISTRAR
+  VALIDAR
+  CALIFICAR
+  CONTACTAR
+  CITA
+  DOCUMENTACION
+  INVENTARIO
+  SEGUIMIENTO
+}
+
+enum Qualification {
+  ALTA
+  MEDIA
+  BAJA
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  role          Role          @default(ANALISTA)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  opportunities Opportunity[]
+  appointments  Appointment[]
+  stageHistories StageHistory[]
+}
+
+model Contact {
+  id           String        @id @default(cuid())
+  name         String
+  phone        String?
+  email        String?
+  company      String?
+  type         String
+  lastContacted DateTime?
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  opportunities Opportunity[]
+}
+
+model Opportunity {
+  id             String          @id @default(cuid())
+  title          String
+  description    String?
+  propertyType   PropertyType
+  operation      OperationType
+  price          Float
+  zone           String
+  source         String
+  stage          Stage           @default(BUSCAR)
+  qualification  Qualification   @default(MEDIA)
+  
+  assignedToId   String?
+  assignedTo     User?           @relation(fields: [assignedToId], references: [id])
+  
+  contactId      String?
+  contact        Contact?        @relation(fields: [contactId], references: [id])
+  
+  stages         StageHistory[]
+  priceEvents    PriceEvent[]
+  appointments   Appointment[]
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model StageHistory {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  fromStage     Stage?
+  toStage       Stage
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  timestamp     DateTime    @default(now())
+}
+
+model Appointment {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  dateTime      DateTime
+  notes         String?
+  completed     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+}
+
+model PriceEvent {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  oldPrice      Float
+  newPrice      Float
+  detectedAt    DateTime    @default(now())
+}
+
+model Alliance {
+  id            String      @id @default(cuid())
+  name          String
+  category      String
+  contactInfo   String?
+  notes         String?
+  createdAt     DateTime    @default(now())
+}
+
+model DailyReport {
+  id            String      @id @default(cuid())
+  date          DateTime    @unique @default(now())
+  newProperties Int         @default(0)
+  newContacts   Int         @default(0)
+  qualifiedPct  Float       @default(0.0)
+  appointments  Int         @default(0)
+  createdAt     DateTime    @default(now())
+}
+
+model Property {
+  id                 String   @id @default(uuid())
+  source             String
+  externalId         String
+  url                String   @unique
+  title              String?
+  operation          String
+  propertyType       String
+  price              Float?
+  currency           String   @default("MXN")
+  description        String?
+  address            String?
+  municipality       String   @default("Metepec")
+  state              String   @default("Estado de México")
+  latitude           Float?
+  longitude          Float?
+  bedrooms           Int?
+  bathrooms          Int?
+  parkingSpaces      Int?
+  landAreaM2         Float?
+  constructionAreaM2 Float?
+  isBankForeclosure  Boolean  @default(false)
+  publisherName      String?
+  publishedAt        DateTime?
+  scrapedAt          DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([source, externalId])
+  @@index([municipality, operation, propertyType])
+  @@index([isBankForeclosure])
+}

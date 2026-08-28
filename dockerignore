@@ -1,0 +1,12 @@
+@"
+node_modules
+.next
+.git
+.env
+Dockerfile
+docker-compose.yml
+README.md
+dist
+build
+.DS_Store
+"@ | Out-File -Encoding utf8 .dockerignore

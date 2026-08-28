@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # The Brain: PostgreSQL + pgvector for structured data and embeddings
+  db:
+    image: ankane/pgvector:latest
+    container_name: valley-metrix-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: development_password_change_me
+      POSTGRES_DB: real_estate_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d real_estate_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # The Queue: Redis for Celery tasks and Deduplication cache
+  redis:
+    image: redis:alpine
+    container_name: valley-metrix-redis
+    ports:
+      - "6379:6379"
+
+  # The Agent Host: Shared Python environment for Spiders/Workers
+  # This container mounts your local code so you can develop live
+  agents:
+    build: .
+    container_name: valley-metrix-agents
+    volumes:
+      - ./app:/app
+    environment:
+      DATABASE_URL: postgresql://admin:development_password_change_me@db:5432/real_estate_db
+      REDIS_URL: redis://redis:6379/0
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: tail -f /dev/null # Keeps the container running for you to execute scripts
+
+volumes:
+  pgdata:
