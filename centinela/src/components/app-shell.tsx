@@ -2,11 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BriefcaseBusiness, ContactRound, CalendarDays, Handshake, FileText, Users } from "lucide-react";
+import {
+  Activity,
+  LayoutDashboard,
+  BriefcaseBusiness,
+  ContactRound,
+  CalendarDays,
+  Handshake,
+  FileText,
+  Users,
+} from "lucide-react";
 import { SignOutButton } from "./sign-out-button";
 
 const links = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/scraper", label: "Scraper", icon: Activity },
+
   { href: "/oportunidades", label: "Oportunidades", icon: BriefcaseBusiness },
   { href: "/contactos", label: "Contactos", icon: ContactRound },
   { href: "/citas", label: "Citas", icon: CalendarDays },
@@ -14,14 +25,22 @@ const links = [
   { href: "/reportes", label: "Reportes", icon: FileText },
 ];
 
-export function AppShell({ children, user }: { children: React.ReactNode; user: { name: string; email: string; role: string } | null }) {
+export function AppShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: { name: string; email: string; role: string } | null;
+}) {
   const pathname = usePathname();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <aside className="fixed inset-y-0 left-0 w-64 border-r border-slate-200 bg-white p-6">
         <div className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Centinela</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
+            Centinela
+          </p>
           <h2 className="mt-2 text-xl font-semibold">Panel operativo</h2>
         </div>
         <nav className="space-y-2">

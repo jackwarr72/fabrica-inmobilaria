@@ -49,6 +49,7 @@ __pycache__/
 *.db-wal
 *.log
 .freebuff/
+scraper/_*.py
 
 # Project Recorder (local session)
 .project-recorder/

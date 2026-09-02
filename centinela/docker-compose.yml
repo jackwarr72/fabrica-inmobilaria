@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: centinela_dev
       POSTGRES_DB: centinela
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - centinela_pgdata:/var/lib/postgresql/data
 

@@ -25,13 +25,13 @@ Centinela es una plataforma interna de inteligencia comercial y captación inmob
 
 ## Scripts
 
-| Script | Propósito |
-| --- | --- |
-| `pnpm dev` | Inicia el servidor de desarrollo |
-| `pnpm build` | Genera la build de producción |
-| `pnpm lint` | Ejecuta ESLint |
-| `pnpm typecheck` | Ejecuta TypeScript sin emitir |
-| `pnpm format` | Formatea el proyecto con Prettier |
+| Script              | Propósito                                        |
+| ------------------- | ------------------------------------------------ |
+| `pnpm dev`          | Inicia el servidor de desarrollo                 |
+| `pnpm build`        | Genera la build de producción                    |
+| `pnpm lint`         | Ejecuta ESLint                                   |
+| `pnpm typecheck`    | Ejecuta TypeScript sin emitir                    |
+| `pnpm format`       | Formatea el proyecto con Prettier                |
 | `pnpm set-password` | Asigna contraseñas de usuarios desde la terminal |
 
 ## Autenticación
@@ -50,5 +50,17 @@ pnpm set-password admin@centinela.local <tu-contraseña>
 ```
 
 Ahora puedes iniciar el servidor y acceder a http://localhost:3000/login con las credenciales:
-- Correo: admin@centinela.local
+
+- Correo: `admin@centinela.local`
 - Contraseña: la que acabas de establecer
+
+## Dashboard del scraper
+
+Con el servidor de Centinela activo, sincroniza los registros existentes del scraper desde otra terminal:
+
+```powershell
+cd "C:\Users\Windows 11\Desktop\Project 1\scraper"
+py sync_to_centinela.py
+```
+
+También puedes ejecutar el flujo completo con `run_scraper.bat`; al finalizar el spider y el matcher, el runner sincroniza automáticamente `properties.db` con Centinela. El dashboard principal muestra las métricas y últimas propiedades detectadas. La vista detallada del scraper está disponible en http://localhost:3000/scraper.

@@ -776,38 +776,38 @@ Anota en el resumen final cualquier verificación manual que no pudiste ejecutar
 ## Checklist
 
 ### Phase 1
-- [ ] `labels.ts` extendido con contactos y citas
-- [ ] `pnpm typecheck` pasa
+- [x] `labels.ts` extendido con contactos y citas
+- [x] `pnpm typecheck` pasa
 
 ### Phase 2
-- [ ] Actions de contactos: create / update / registerTouch
+- [x] Actions de contactos: create / update / registerTouch
 
 ### Phase 3
-- [ ] `ContactForm` reutilizado para crear y editar
-- [ ] `/contactos/nueva` funciona
+- [x] `ContactForm` reutilizado para crear y editar
+- [x] `/contactos/nueva` funciona
 
 ### Phase 4
-- [ ] Listado con filtro de tipo, búsqueda y paginación
-- [ ] Contador "nuevos últimos 7 días"
+- [x] Listado con filtro de tipo, búsqueda y paginación
+- [x] Contador "nuevos últimos 7 días"
 
 ### Phase 5
-- [ ] Detalle con oportunidades y citas relacionadas
-- [ ] "Marcar contactado" y edición funcionando
+- [x] Detalle con oportunidades y citas relacionadas
+- [x] "Marcar contactado" y edición funcionando
 
 ### Phase 6
-- [ ] Actions de citas con avance automático de oportunidad a CITA
-- [ ] `StageHistory` registra el avance
+- [x] Actions de citas con avance automático de oportunidad a CITA
+- [x] `StageHistory` registra el avance
 
 ### Phase 7
-- [ ] `/citas/nueva` auto-rellena contacto desde la oportunidad
+- [x] `/citas/nueva` auto-rellena contacto desde la oportunidad
 
 ### Phase 8
-- [ ] Listado de citas con acciones completar/no-show/cancelar
-- [ ] Contador "citas últimos 7 días"
+- [x] Listado de citas con acciones completar/no-show/cancelar
+- [x] Contador "citas últimos 7 días"
 
 ### Phase 9
-- [ ] `pnpm typecheck && pnpm lint && pnpm build` ✅
-- [ ] Commit `feat: contacts and appointments (task 005)`
+- [x] `pnpm typecheck && pnpm lint && pnpm build` ✅
+- [x] Commit `feat: contacts and appointments (task 005)`
 
 ---
 

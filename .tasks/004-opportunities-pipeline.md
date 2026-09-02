@@ -795,32 +795,32 @@ Anota en el resumen final cualquier verificación manual que no pudiste ejecutar
 ## Checklist
 
 ### Phase 1
-- [ ] `src/lib/labels.ts` y `src/lib/format.ts` creados
-- [ ] `pnpm typecheck` pasa
+- [x] `src/lib/labels.ts` y `src/lib/format.ts` creados
+- [x] `pnpm typecheck` pasa
 
 ### Phase 2
-- [ ] `actions.ts` con create / changeStatus / setQualification
-- [ ] Transacciones escriben `StageHistory`
-- [ ] `firstContactAt` se fija al pasar a CONTACTED
-- [ ] `pnpm typecheck` pasa
+- [x] `actions.ts` con create / changeStatus / setQualification
+- [x] Transacciones escriben `StageHistory`
+- [x] `firstContactAt` se fija al pasar a CONTACTED
+- [x] `pnpm typecheck` pasa
 
 ### Phase 3
-- [ ] `/oportunidades/nueva` con formulario validado
-- [ ] Al crear, redirige al detalle
+- [x] `/oportunidades/nueva` con formulario validado
+- [x] Al crear, redirige al detalle
 
 ### Phase 4
-- [ ] Listado con 5 filtros + paginación de 20
-- [ ] Filtros envueltos en `<Suspense>`
-- [ ] `pnpm build` pasa
+- [x] Listado con 5 filtros + paginación de 20
+- [x] Filtros envueltos en `<Suspense>`
+- [x] `pnpm build` pasa
 
 ### Phase 5
-- [ ] Detalle con datos completos, SLA, historial y cambios de precio
-- [ ] Cambio de estatus y calificación funcionan vía server actions
+- [x] Detalle con datos completos, SLA, historial y cambios de precio
+- [x] Cambio de estatus y calificación funcionan vía server actions
 
 ### Phase 6
-- [ ] `pnpm typecheck && pnpm lint && pnpm build` ✅
-- [ ] Commit `feat: opportunities CRUD and pipeline (task 004)`
-- [ ] Redirect sin sesión verificado
+- [x] `pnpm typecheck && pnpm lint && pnpm build` ✅
+- [x] Commit `feat: opportunities CRUD and pipeline (task 004)`
+- [x] Redirect sin sesión verificado
 
 ---
 
